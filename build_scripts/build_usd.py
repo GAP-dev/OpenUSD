@@ -435,6 +435,15 @@ def RunCMake(context, force, extraArgs = None):
     # Append extra argument controlling libstdc++ ABI if specified.
     AppendCXX11ABIArg("-DCMAKE_CXX_FLAGS", context, extraArgs)
 
+    # Add AFL and AddressSanitizer configurations
+    extraArgs.append('-DCMAKE_C_COMPILER=afl-clang-fast')
+    extraArgs.append('-DCMAKE_CXX_COMPILER=afl-clang-fast++')
+    extraArgs.append('-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS} -fsanitize=address')
+    extraArgs.append('-DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS} -fsanitize=address')
+    extraArgs.append('-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address')
+    extraArgs.append('-DCMAKE_SHARED_LINKER_FLAGS=${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address')
+
+    
     with CurrentWorkingDirectory(buildDir):
         Run('cmake '
             '-DCMAKE_INSTALL_PREFIX="{instDir}" '
